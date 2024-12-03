@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Word Game</title>
+	
+	<style>
+	        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #263238, #1a237e);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            font-size: 16px;
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #1a237e;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #wordDisplay {
+            font-size: 40px;
+            letter-spacing: 5px;
+            font-weight: bold;
+            color: #1976d2;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        #message {
+            font-size: 16px;
+            color: #FF5722;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .input-container {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #guessInput {
+            padding: 10px;
+            font-size: 18px;
+            width: 50px;
+            text-align: center;
+            border: 2px solid #0288d1;
+            border-radius: 10px;
+            outline: none;
+            margin-right: 10px;
+            transition: 0.3s ease-in-out;
+        }
+
+        #guessInput:focus {
+            border-color: #1976d2;
+            box-shadow: 0 0 5px rgba(0, 137, 255, 0.7);
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #263238, #1a237e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #212121, #0d47a1);
+        }
+
+        .guessedLetters {
+            font-size: 14px;
+            color: #757575;
+            margin-top: 20px;
+        }
+
+        .guessedLetters span {
+            font-weight: bold;
+            color: #FF5722;
+            margin: 0 5px;
+        }
+
+        /* Timer styling */
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF5722;
+            margin-top: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            #wordDisplay {
+                font-size: 32px;
+            }
+
+            #guessInput {
+                font-size: 16px;
+                width: 45px;
+            }
+
+            .button {
+                font-size: 14px;
+            }
+
+            #timer {
+                font-size: 16px;
+            }
+        }
+
+        /* Thank You message */
+        #thankYouMessage {
+            font-size: 18px;
+            color: #F8F0E3;
+            font-weight: 600;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+
+        /* Difficulty screen */
+        #difficultyScreen {
+            display: none;
+        }
+
+        /* Game screen */
+        #gameScreen {
+            display: none;
+        }
+
+        /* End Screen (Game Over / Win) */
+        #endScreen {
+            display: none;
+        }
+		
+		.right-bottom {
+			position: fixed;
+			bottom: 10px; /* Distance from the bottom of the screen */
+			right: 10px; /* Distance from the right of the screen */
+			background-color: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			text-align: center;
+			font-family: 'Poppins', sans-serif;
+			font-size: 1.1rem; /* Text size */
+			transform: none; /* Remove rotation */
+		}
+
+		.right-bottom a {
+			color: #ffd700; /* Gold color */
+			text-decoration: none;
+			transition: color 0.3s ease;
+			display: block;
+		}
+
+		.right-bottom a:hover {
+			color: #fff;
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+    <!-- Start Screen (Before Game Starts) -->
+    <div class="container" id="startScreen">
+        <h1>Welcome to <br> Guess the Word Game!</h1>
+        <p>Select an option to start the game.</p>
+
+        <button class="button" onclick="startGame()">Start Game</button>
+        <button class="button" onclick="quitGame()">Quit Game</button>
+    </div>
+
+    <!-- Difficulty Selection Screen -->
+    <div class="container" id="difficultyScreen">
+        <h1>Select Difficulty</h1>
+        <button class="button" onclick="selectDifficulty('easy')">Easy</button>
+        <button class="button" onclick="selectDifficulty('medium')">Medium</button>
+        <button class="button" onclick="selectDifficulty('hard')">Hard</button>
+    </div>
+	
+    <!-- Game Screen -->
+    <div class="container" id="gameScreen">
+        <h1>Guess the Word Game</h1>
+        <p id="message">Try to guess the word before time runs out!</p>
+
+        <div id="wordDisplay">_ _ _ _ _ _ _</div>
+        <div class="guessedLetters">Guessed letters: <span id="guessedLetters"></span></div>
+
+        <div class="input-container">
+            <input type="text" id="guessInput" maxlength="1" placeholder="Letter" />
+            <button class="button" onclick="makeGuess()">Guess Letter</button>
+        </div>
+
+        <div id="timer">Time Remaining: 120</div>
+    </div>
+	
+    <!-- End Screen (Game Over / Win) -->
+    <div class="container" id="endScreen">
+        <h1 id="endMessage">Game Over</h1>
+        <button class="button" onclick="restartGame()">Restart Game</button>
+        <button class="button" onclick="quitGame()">Quit Game</button>
+    </div>
+	
+    <!-- Thank You Message -->
+    <div class="container" id="thankYouMessage" style="display:none;">
+        <h1>Thank you for playing! We hope you enjoyed the game.</h1>
+        <button class="button" onclick="backToStart()">Back to Start</button>
+    </div>
+    <div class="right-bottom">
+        <a href="Fun Landing Page.html">Go back to all Games</a>
+    </div>
+ 
+	<script>
+		let wordsEasy = ["moon", "star", "tree", "cloud"];
+        let wordsMedium = ["function", "variable", "array", "syntax", "debugging", "loop"];
+        let wordsHard = ["algorithm", "compiler", "recursion", "polymorphism", "inheritance", "abstraction", "encapsulation", "optimization"];
+        let word, wordDisplay, guessedLetters, tries, timeLimit, timerInterval, selectedDifficulty;
+
+        // Start Game: Show the difficulty screen after selecting start
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('difficultyScreen').style.display = 'block';
+        }
+
+        // Quit Game: Show a confirmation prompt
+        function quitGame() {
+            const confirmQuit = confirm("Are you sure you want to quit the game?");
+            if (confirmQuit) {
+                document.getElementById('thankYouMessage').style.display = 'block'; // Display the Thank You message
+                document.getElementById('startScreen').style.display = 'none';
+                document.getElementById('difficultyScreen').style.display = 'none'; // Hide the difficulty selection screen
+                document.getElementById('gameScreen').style.display = 'none'; // Hide the game screen
+                document.getElementById('endScreen').style.display = 'none'; // Hide the end screen
+
+                // Reset game variables
+                resetGameState();
+            }
+        }
+
+        // Go back to the start screen after quitting the game
+        function backToStart() {
+            document.getElementById('thankYouMessage').style.display = 'none'; // Hide Thank You message
+            document.getElementById('startScreen').style.display = 'block'; // Show start screen
+        }
+
+        // Select Difficulty: based on user choice, load respective words and set timer
+        function selectDifficulty(difficulty) {
+            selectedDifficulty = difficulty;
+            if (difficulty === 'easy') {
+                words = wordsEasy;
+                timeLimit = 120;  // Easy difficulty timer
+            } else if (difficulty === 'medium') {
+                words = wordsMedium;
+                timeLimit = 90;   // Medium difficulty timer
+            } else if (difficulty === 'hard') {
+                words = wordsHard;
+                timeLimit = 60;   // Hard difficulty timer
+            }
+
+            document.getElementById('difficultyScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+
+            initializeGame();
+        }
+
+        // Initialize the game
+        function initializeGame() {
+            word = words[Math.floor(Math.random() * words.length)];
+            wordDisplay = Array(word.length).fill('_');
+            guessedLetters = [];
+            tries = 6;
+
+            document.getElementById("message").textContent = "Try to guess the word before time runs out!";
+            document.getElementById("guessInput").disabled = false;
+            document.getElementById("guessInput").value = '';
+            updateDisplay();
+            startTimer();
+        }
+
+        // Update the word and guessed letters display
+        function updateDisplay() {
+            document.getElementById("wordDisplay").textContent = wordDisplay.join(' ');
+            document.getElementById("guessedLetters").textContent = guessedLetters.join(', ');
+        }
+
+        // Handle user's guess
+        function makeGuess() {
+            const guess = document.getElementById("guessInput").value.toLowerCase();
+            if (!guess || guessedLetters.includes(guess)) {
+                alert("Please enter a valid letter that you haven't guessed already.");
+                return;
+            }
+
+            guessedLetters.push(guess);
+            let found = false;
+            for (let i = 0; i < word.length; i++) {
+                if (word[i] === guess) {
+                    wordDisplay[i] = guess;
+                    found = true;
+                }
+            }
+
+            if (found) {
+                updateDisplay();
+            } else {
+                tries--;
+                if (tries === 0) {
+                    document.getElementById("message").textContent = "You ran out of time! The word was: " + word;
+                    document.getElementById("guessInput").disabled = true;
+                    clearInterval(timerInterval);
+                    endGame("Game Over! The word was: " + word);
+                } else {
+                    document.getElementById("message").textContent = `Wrong guess! You have ${tries} tries left.`;
+                }
+            }
+
+            if (wordDisplay.join('') === word) {
+                document.getElementById("message").textContent = "Congratulations! You've guessed the word: " + word;
+                document.getElementById("guessInput").disabled = true;
+                clearInterval(timerInterval);
+                endGame("Congratulations! You've guessed the word.");
+            }
+
+            document.getElementById("guessInput").value = ''; // Clear input field
+        }
+
+        // Start the countdown timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLimit--;
+                document.getElementById("timer").textContent = "Time Remaining: " + timeLimit;
+                if (timeLimit <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("message").textContent = "Time's up! The word was: " + word;
+                    document.getElementById("guessInput").disabled = true;
+                    endGame("You ran out of time. Try again!");
+                }
+            }, 1000);
+        }
+
+        // End the game and show options
+        function endGame(message) {
+            document.getElementById("message").textContent = message;
+			document.getElementById("endMessage").textContent = message;
+            document.getElementById("endScreen").style.display = "block"; // Show end options
+            document.getElementById('gameScreen').style.display = 'none'; // Hide game screen
+        }
+
+        // Restart the game
+        function restartGame() {
+            document.getElementById('endScreen').style.display = 'none';
+            document.getElementById('difficultyScreen').style.display = 'block'; // Go back to difficulty screen
+        }
+
+        // Reset game state variables
+        function resetGameState() {
+            word = '';
+            wordDisplay = [];
+            guessedLetters = [];
+            tries = 0;
+            timeLimit = 0;
+            clearInterval(timerInterval); // Stop any active timer
+        }
+	</script>
+</body>
+</html>

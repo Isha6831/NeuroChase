@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Now or Later Game</title>
+    <link rel="stylesheet" href="styles.css">
+	
+	<style>
+		/* Global reset */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			text-align: center;
+			padding: 20px;
+            background: linear-gradient(135deg, #b71c1c, #4a148c);
+			color: #333;
+			margin: 0;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		h1 {
+            font-size: 30px;
+            color: #b71c1c;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+		.game-container {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+			padding: 27px;
+			text-align: center;
+			width: 90%;
+			max-width: 525px;
+		}
+
+		#moneyDisplay h2 {
+			font-size: 1.5rem;
+			margin-bottom: 20px;
+		}
+
+		.options-container {
+			display: flex;
+			justify-content: space-around;
+			margin-top: 20px;
+			flex-wrap: wrap;
+		}
+
+		button.option {
+            padding: 15px 25px;
+            font-size: 20px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #b71c1c, #4a148c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+		button.option:hover {
+			transform: translateY(-3px);
+            background: linear-gradient(135deg, #c62828, #6a1b9a);
+        }
+
+		#result {
+			font-size: 1.2rem;
+			margin-top: 20px;
+			font-weight: bold;
+		}
+
+		#restartButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #b71c1c, #4a148c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+		#restartButton:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #c62828, #6a1b9a);
+        }
+
+		/* Mobile responsiveness */
+		@media (max-width: 600px) {
+			h1 {
+				font-size: 1.5rem;
+			}
+
+			#moneyDisplay h2 {
+				font-size: 1.2rem;
+			}
+
+			button.option {
+				font-size: 1rem;
+				padding: 12px;
+				width: 150px;
+			}
+
+			#result {
+				font-size: 1rem;
+			}
+
+			#restartButton {
+				font-size: 1rem;
+				padding: 8px 16px;
+			}
+		}
+		
+		.right-bottom {
+			position: fixed;
+			bottom: 10px; /* Distance from the bottom of the screen */
+			right: 10px; /* Distance from the right of the screen */
+			background-color: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			text-align: center;
+			font-family: 'Poppins', sans-serif;
+			font-size: 1.1rem; /* Text size */
+			transform: none; /* Remove rotation */
+		}
+
+		.right-bottom a {
+			color: #ffd700; /* Gold color */
+			text-decoration: none;
+			transition: color 0.3s ease;
+			display: block;
+		}
+
+		.right-bottom a:hover {
+			color: #fff;
+			text-decoration: underline;
+		}
+</style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Now or Later?</h1>
+        <p id="instruction">You can take ₹2000 now or wait for a higher amount later!</p>
+		<p id="instruction">There is a 19% chance you lose all money!</p>
+		<p><br></p>
+
+        <!-- Displaying the money -->
+        <div id="moneyDisplay">
+            <h2>Current Offer: ₹<span id="currentMoney">2000</span></h2>
+        </div>
+
+        <!-- Buttons for user choice -->
+        <div class="options-container">
+            <button id="nowButton" class="option">Take Money Now</button>
+            <button id="laterButton" class="option">Wait for Later</button>
+        </div>
+
+        <!-- Result -->
+        <div id="result" class="result"></div>
+       
+        <!-- Restart Button -->
+        <button id="restartButton" style="display: none;" class="restart-button">Play Again</button>
+    </div>
+    <div class="right-bottom">
+        <a href="0. Main Landing Page.html">Go back to all Games</a>
+    </div>
+	
+	<script>
+		// Get references to HTML elements
+		const currentMoneyDisplay = document.getElementById('currentMoney');
+		const resultDiv = document.getElementById('result');
+		const nowButton = document.getElementById('nowButton');
+		const laterButton = document.getElementById('laterButton');
+		const restartButton = document.getElementById('restartButton');
+		const instruction = document.getElementById('instruction');
+
+		// Game variables
+		let moneyLevels = [2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000]; // Money increments
+		let timeIntervals = [2100, 5200, 11400, 25800, 55000, 120000, 270000, 650000]; // Time intervals in milliseconds
+		let currentIndex = 0; // Index to track the current money level
+
+		// Function to start the game
+		function startGame() {
+			// Reset variables
+			currentIndex = 0;
+			resultDiv.style.display = 'none';
+			restartButton.style.display = 'none';
+			instruction.textContent = 'You can take ₹2000 now or wait for a higher amount later!';
+
+			// Reset money to the starting amount
+			currentMoneyDisplay.textContent = moneyLevels[currentIndex];
+
+			// Enable buttons
+			nowButton.disabled = false;
+			laterButton.disabled = false;
+		}
+
+		// Function to handle the "Take Money Now" choice
+		function takeMoneyNow() {
+			resultDiv.textContent = `You took ₹${moneyLevels[currentIndex]} now!`;
+			resultDiv.style.color = 'green';
+			resultDiv.style.display = 'block';
+
+			// Hide buttons after choice and show restart button
+			nowButton.disabled = true;
+			laterButton.disabled = true;
+			restartButton.style.display = 'inline-block';
+		}
+
+		// Function to handle the "Wait for Later" choice
+		function waitForLater() {
+			// Disable buttons while waiting for later
+			nowButton.disabled = true;
+			laterButton.disabled = true;
+
+			// Show waiting message
+			instruction.textContent = 'You chose to wait...';
+
+			// Simulate waiting for each level of money
+			const waitForNextLevel = (index) => {
+				if (index >= moneyLevels.length - 1) {
+					// If the last level is reached, finalize the result
+					resultDiv.textContent = `You waited and got ₹${moneyLevels[index]}!`;
+					resultDiv.style.color = 'green';
+					resultDiv.style.display = 'block';
+					restartButton.style.display = 'inline-block';
+					return;
+				}
+
+				setTimeout(() => {
+					const chanceToLose = Math.random() > 0.19; // 81% chance of success
+					if (chanceToLose) {
+						currentIndex++;
+						currentMoneyDisplay.textContent = moneyLevels[currentIndex];
+						instruction.textContent = `Offer increased to ₹${moneyLevels[currentIndex]}! You can wait longer or take it now.`;
+
+						// Re-enable buttons
+						nowButton.disabled = false;
+						laterButton.disabled = false;
+					} else {
+						resultDiv.textContent = `You waited but lost the money!`;
+						resultDiv.style.color = 'red';
+						resultDiv.style.display = 'block';
+						restartButton.style.display = 'inline-block';
+					}
+				}, timeIntervals[index]);
+			};
+
+			waitForNextLevel(currentIndex);
+		}
+
+		// Event listeners for user choices
+		nowButton.addEventListener('click', takeMoneyNow);
+		laterButton.addEventListener('click', () => {
+			waitForLater();
+		});
+
+		// Event listener for restarting the game
+		restartButton.addEventListener('click', startGame);
+
+		// Start the game when the page loads
+		startGame();
+	</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Left or Right Game</title>
+	
+    <style>
+        /* Global reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+			font-family: Arial, sans-serif;
+			text-align: center;
+			padding: 20px;
+            background: linear-gradient(135deg, #0288d1, #4caf50);
+			color: #333;
+			margin: 0;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+        h1 {
+            font-size: 30px;
+            color: #0288d1;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .game-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 550px;
+        }
+
+        .game-arrows, .user-choice {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .game-arrows button, .user-choice button {
+            padding: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s;
+            width: 70px;
+            height: 70px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+
+        #result {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #restartButton {
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #0288d1, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        #restartButton:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #0277bd, #388e3c);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                font-size: 1.5rem;
+                padding: 10px;
+                width: 60px;
+                height: 60px;
+            }
+
+            #result {
+                font-size: 1rem;
+            }
+
+            #restartButton {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+        }
+		
+		.right-bottom {
+			position: fixed;
+			bottom: 10px; /* Distance from the bottom of the screen */
+			right: 10px; /* Distance from the right of the screen */
+			background-color: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			text-align: center;
+			font-family: 'Poppins', sans-serif;
+			font-size: 1.1rem; /* Text size */
+			transform: none; /* Remove rotation */
+		}
+
+		.right-bottom a {
+			color: #ffd700; /* Gold color */
+			text-decoration: none;
+			transition: color 0.3s ease;
+			display: block;
+		}
+
+		.right-bottom a:hover {
+			color: #fff;
+			text-decoration: underline;
+		}
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Left or Right Game</h1>
+        <p id="instruction">Guess the middle arrow direction!</p>
+        <div class="game-arrows">
+            <button id="arrow1">↑</button>
+            <button id="arrow2">↓</button>
+            <button id="arrow3">←</button> <!-- Middle arrow -->
+            <button id="arrow4">↘</button>
+            <button id="arrow5">↖</button>
+        </div>
+        <div class="user-choice">
+            <button id="guessLeft">←</button>
+            <button id="guessRight">→</button>
+        </div>
+        <div id="result"></div>
+        <button id="restartButton" style="display: none;">Restart Game</button>
+    </div>
+	<div class="right-bottom">
+        <a href="0. Main Landing Page.html">Go back to all Games</a>
+    </div>
+	
+    <script>
+        const arrowElements = [
+            document.getElementById('arrow1'),
+            document.getElementById('arrow2'),
+            document.getElementById('arrow4'),
+            document.getElementById('arrow5')
+        ];
+        const middleArrow = document.getElementById('arrow3');
+        const resultDiv = document.getElementById('result');
+        const restartButton = document.getElementById('restartButton');
+        const instruction = document.getElementById('instruction');
+
+        const directions = ["↑", "↓", "←", "→", "↖", "↗", "↙", "↘"];
+        const middleDirections = ["←", "→"];
+
+        let middleArrowDirection;
+        let oscillationInterval;
+
+        // Initialize the game
+        function initializeGame() {
+            // Randomly set the middle arrow direction
+            middleArrowDirection = middleDirections[Math.floor(Math.random() * middleDirections.length)];
+            middleArrow.textContent = middleArrowDirection;
+
+            // Reset UI
+            resultDiv.textContent = "";
+            resultDiv.style.color = "";
+            restartButton.style.display = "none";
+            instruction.textContent = "Guess the middle arrow direction!";
+
+            // Start oscillating the other arrows
+            startOscillation();
+        }
+
+        // Start oscillating the other arrows
+        function startOscillation() {
+            // Clear any existing interval
+            if (oscillationInterval) clearInterval(oscillationInterval);
+
+            // Set interval to update arrow directions every 500ms
+            oscillationInterval = setInterval(() => {
+                arrowElements.forEach(arrow => {
+                    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+                    arrow.textContent = randomDirection;
+                });
+            }, 500); // Adjust speed by changing this value
+        }
+
+        // Stop oscillating the other arrows
+        function stopOscillation() {
+            clearInterval(oscillationInterval);
+        }
+
+        // Handle user guess
+        function handleGuess(guess) {
+            stopOscillation(); // Stop oscillating arrows when the user makes a guess
+
+            if (guess === middleArrowDirection) {
+                resultDiv.textContent = `Correct! The middle arrow is ${middleArrowDirection}.`;
+                resultDiv.style.color = "green";
+            } else {
+                resultDiv.textContent = `Wrong! The middle arrow is ${middleArrowDirection}.`;
+                resultDiv.style.color = "red";
+            }
+            restartButton.style.display = "inline-block";
+        }
+
+        // Event listeners for user choice buttons
+        document.getElementById('guessLeft').addEventListener('click', () => handleGuess("←"));
+        document.getElementById('guessRight').addEventListener('click', () => handleGuess("→"));
+
+        // Event listener for restart button
+        restartButton.addEventListener('click', initializeGame);
+
+        // Initialize the game on page load
+        initializeGame();
+    </script>
+</body>
+</html>

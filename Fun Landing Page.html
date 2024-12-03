@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Fun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+	
+	<style>
+		/* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .game-logo-wrapper {
+            text-align: center;
+        }
+
+        .game-logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            border: 5px solid #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .game-logo:hover {
+            transform: scale(1.1) rotate(8deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.2);
+        }
+
+        .game-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .game-logo:hover img {
+            transform: scale(1.1);
+        }
+
+        .game-title {
+			margin-top: 10px;
+            font-size: 1rem;
+            color: #000;
+			text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+        }
+	</style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Choose a Game</h1>
+        <div class="logo-container">
+            <div class="game-logo-wrapper">
+                <a href="G1 Guess Word.html">
+                    <div class="game-logo">
+                        <img src="https://tse2.mm.bing.net/th?id=OIP.CBKtqnt0Weal0CvKhyh4swHaFQ&pid=Api&P=0&h=180" alt="GUESS THE WORD" title="GUESS THE WORD">
+                    </div>
+                </a>
+                <p class="game-title">Guess the Word</p>
+            </div>
+            <div class="game-logo-wrapper">
+                <a href="G2 Tic Tac Toe.html">
+                    <div class="game-logo">
+                        <img src="https://tse1.mm.bing.net/th?id=OIP.0KDgqNvZivf8A3r0ByBEvgHaEK&pid=Api&P=0&h=180" alt="TIC TAC TOE" title="TIC TAC TOE">
+                    </div>
+                </a>
+                <p class="game-title">Tic Tac Toe</p>
+            </div>
+            <div class="game-logo-wrapper">
+                <a href="G3 Scratch Game.html">
+                    <div class="game-logo">
+                        <img src="https://static.drimify.com/wp-content/uploads/2020/03/scratch-grid1200x800-1-800x400.png?220823" alt="SCRATCH GAME" title="SCRATCH GAME">
+                    </div>
+                </a>
+                <p class="game-title">Scratch Game</p>
+            </div>
+            <div class="game-logo-wrapper">
+                <a href="G4 Guess The Number.html">
+                    <div class="game-logo">
+                        <img src="https://content.instructables.com/FGE/F6F0/K1NVATVK/FGEF6F0K1NVATVK.jpg?auto=webp" alt="GUESS THE NUMBER" title="GUESS THE NUMBER">
+                    </div>
+                </a>
+                <p class="game-title">Guess the Number</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Emotion Game</title>
+    <link rel="stylesheet" href="styles.css">
+	
+	<style>
+		/* Global reset */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #263238, #1a237e);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #1a237e;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+		.game-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            font-size: 16px;
+        }
+
+		.image-container {
+			margin-bottom: 20px;
+		}
+
+		.emotion-image {
+			width: 100%;
+			max-width: 300px;
+			height: auto;
+			border-radius: 10px;
+		}
+
+		.options-container {
+			display: flex;
+			justify-content: space-around;
+			margin-top: 20px;
+			flex-wrap: wrap;
+		}
+
+		button.option {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #263238, #1a237e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+		button.option:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #212121, #0d47a1);
+        }
+
+		#result {
+			font-size: 1.2rem;
+			margin-top: 20px;
+			font-weight: bold;
+		}
+
+		#restartButton {
+			margin-top: 20px;
+			font-size: 1.2rem;
+			padding: 10px 20px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		#restartButton:hover {
+			background-color: #45a049;
+		}
+
+		/* Mobile responsiveness */
+		@media (max-width: 600px) {
+			h1 {
+				font-size: 1.5rem;
+			}
+
+			.emotion-image {
+				max-width: 200px;
+			}
+
+			button.option {
+				font-size: 1rem;
+				padding: 12px;
+				width: 120px;
+				height: 50px;
+			}
+
+			#result {
+				font-size: 1rem;
+			}
+
+			#restartButton {
+				font-size: 1rem;
+				padding: 8px 16px;
+			}
+		}
+		
+		.right-bottom {
+			position: fixed;
+			bottom: 10px; /* Distance from the bottom of the screen */
+			right: 10px; /* Distance from the right of the screen */
+			background-color: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			padding: 15px 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			text-align: center;
+			font-family: 'Poppins', sans-serif;
+			font-size: 1.1rem; /* Text size */
+			transform: none; /* Remove rotation */
+		}
+
+		.right-bottom a {
+			color: #ffd700; /* Gold color */
+			text-decoration: none;
+			transition: color 0.3s ease;
+			display: block;
+		}
+
+		.right-bottom a:hover {
+			color: #fff;
+			text-decoration: underline;
+		}
+</style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Guess the Emotion</h1>
+        <p id="instruction"><br>Choose the emotion that matches the expression!</p>
+
+        <!-- Display Emotion Image -->
+        <div class="image-container">
+		<p><br></p>
+            <img id="emotionImage" src="happy.jpg" alt="Emotion" class="emotion-image"/>
+        </div>
+
+        <!-- Emotion Options -->
+        <div class="options-container">
+            <button class="option" id="happyButton">Happy</button>
+            <button class="option" id="sadButton">Sad</button>
+            <button class="option" id="angryButton">Angry</button>
+            <button class="option" id="surprisedButton">Surprised</button>
+        </div>
+
+        <!-- Result and Restart Button -->
+        <div id="result"></div>
+        <button id="restartButton" style="display: none;">Restart Game</button>
+    </div>
+    <div class="right-bottom">
+        <a href="0. Main Landing Page.html">Go back to all Games</a>
+    </div>
+
+	<script>
+		// Get references to HTML elements
+		const emotionImage = document.getElementById('emotionImage');
+		const resultDiv = document.getElementById('result');
+		const restartButton = document.getElementById('restartButton');
+		const instruction = document.getElementById('instruction');
+
+		// Emotion data (images and corresponding answers)
+		const emotions = [
+			{ image: 'happy.jpg', correctAnswer: 'Happy' },
+			{ image: 'sad.jpg', correctAnswer: 'Sad' },
+			{ image: 'angry.jpg', correctAnswer: 'Angry' },
+			{ image: 'surprised.jpg', correctAnswer: 'Surprised' },
+			{ image: 'happy2.jpg', correctAnswer: 'Happy' },
+			{ image: 'sad2.jpg', correctAnswer: 'Sad' },
+			{ image: 'angry2.jpg', correctAnswer: 'Angry' },
+			{ image: 'surprised2.jpg', correctAnswer: 'Surprised' },
+			{ image: 'happy3.jpg', correctAnswer: 'Happy' },
+			{ image: 'sad3.jpg', correctAnswer: 'Sad' },
+			{ image: 'angry3.jpg', correctAnswer: 'Angry' },
+			{ image: 'surprised3.jpg', correctAnswer: 'Surprised' }
+		];
+
+		// Game variables
+		let currentEmotion = null;
+
+		// Function to get a random emotion from the list
+		function getRandomEmotion() {
+			const randomIndex = Math.floor(Math.random() * emotions.length);
+			return emotions[randomIndex];
+		}
+
+		// Function to start the game
+		function startGame() {
+			// Reset result and hide the restart button
+			resultDiv.style.display = 'none';
+			restartButton.style.display = 'none';
+
+			// Get a random emotion
+			currentEmotion = getRandomEmotion();
+
+			// Set the emotion image and hide the result message
+			emotionImage.src = currentEmotion.image;
+			instruction.textContent = 'Choose the emotion that matches the expression!';
+		}
+
+		// Function to handle player's choice
+		function handleChoice(choice) {
+			if (choice === currentEmotion.correctAnswer) {
+				resultDiv.textContent = 'Correct!';
+				resultDiv.style.color = 'green';
+			} else {
+				resultDiv.textContent = 'Wrong! It was ' + currentEmotion.correctAnswer + '.';
+				resultDiv.style.color = 'red';
+			}
+			resultDiv.style.display = 'block';
+
+			// Show the restart button after a choice is made
+			restartButton.style.display = 'inline-block';
+		}
+
+		// Event listeners for the buttons
+		document.getElementById('happyButton').addEventListener('click', () => handleChoice('Happy'));
+		document.getElementById('sadButton').addEventListener('click', () => handleChoice('Sad'));
+		document.getElementById('angryButton').addEventListener('click', () => handleChoice('Angry'));
+		document.getElementById('surprisedButton').addEventListener('click', () => handleChoice('Surprised'));
+
+		// Event listener for the restart button
+		restartButton.addEventListener('click', startGame);
+
+		// Start the game when the page loads
+		startGame();
+	</script>
+</body>
+</html>
